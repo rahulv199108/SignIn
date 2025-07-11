@@ -19,6 +19,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemeContext } from '../../component/molecules/customTheme/CustomTheme';
 
 const SignIn = () => {
+
+
+
   const { theme } = useContext(ThemeContext);
 
   const [email, setEmail] = useState('');
@@ -40,45 +43,61 @@ const SignIn = () => {
   }, [email, password]);
 
   const HandleLogin = async () => {
+    let isValid = true;
+
     if (email.length <= 0) {
-      setTextEmailError('Email field is Blank');
-      setIsDisable(true);
+      setTextEmailError('Email field is blank');
+      isValid = false;
     } else if (!emailRegex.test(email)) {
-      setTextEmailError('Please enter valid Email');
-      setIsDisable(true);
+      setTextEmailError('Please enter a valid email');
+      isValid = false;
     } else {
       setTextEmailError('');
     }
 
     if (password.length <= 0) {
-      setTextPassError('Password field is Blank');
-      setIsDisable(true);
+      setTextPassError('Password field is blank');
+      isValid = false;
     } else if (password.length < 6) {
-      setTextPassError('Password must be at least 6 Characters');
-      setIsDisable(true);
+      setTextPassError('Password must be at least 6 characters');
+      isValid = false;
     } else {
       setTextPassError('');
     }
 
-    setIsDisable(isdisable);
+    if (!isValid) {
+      return;
+    }
 
-    if (!isdisable) {
-      try {
-        const storedUser = await AsyncStorage.getItem('user');
-        if (storedUser) {
-          const user = JSON.parse(storedUser);
-          if (user.email === email && user.password === password) {
-            Alert.alert('Login Successful', `Welcome, ${user.name}`);
-            navigation.navigate('Questionaire');
-          } else {
-            Alert.alert('Sign In Failed', 'Invalid credentials');
-          }
+    try {
+      const storedUser = await AsyncStorage.getItem('user');
+      console.log('Stored user:', storedUser);
+
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        console.log('Parsed user:', user);
+
+        if (user.email === email && user.password === password) {
+          Alert.alert('Login Successful', `Welcome, ${user.name}`);
+          navigation.navigate('Questionaire');
+        } else {
+          Alert.alert('Sign In Failed', 'Invalid credentials');
         }
-      } catch (error) {
-        console.error('Error during sign-in:', error);
+      } else {
+        Alert.alert('Sign In Failed', 'No user found. Please sign up.');
       }
+    } catch (error) {
+      console.log('Error during sign-in:', error);
+      Alert.alert('Error', 'Something went wrong. Please try again.');
     }
   };
+
+
+
+
+  console.log('Email:', email);
+  console.log('Password:', password);
+
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>

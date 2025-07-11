@@ -23,6 +23,7 @@ const Questionaire = () => {
     const initialize = async () => {
       await SaveQuestionnaire(); // Save default data (optional)
       const data = await LoadQuestionnaire();
+      console.log('Loaded questionnaire data:', data);
       if (data) {
         setQuestionnaire(data);
       }
@@ -33,11 +34,14 @@ const Questionaire = () => {
   const handleSelectOption = async (optionIndex) => {
     setSelectedIndex(optionIndex);
     const selectedAnswer = questionnaire[index].options[optionIndex];
+    console.log(`Option selected at Q${index}:`, selectedAnswer);
+
     await AsyncStorage.setItem(`question_${index}`, selectedAnswer);
     console.log(`Answer saved for Q${index}: ${selectedAnswer}`);
 
     setTimeout(() => {
       if (index < questionnaire.length - 1) {
+        console.log('Moving to next question...')
         setIndex((prev) => prev + 1);
         setSelectedIndex(null);
       } else {
@@ -48,13 +52,15 @@ const Questionaire = () => {
 
   const handleNext = () => {
     if (index < questionnaire.length - 1) {
+      console.log('Next button clicked - going to question', index + 1);
       setIndex(index + 1);
       setSelectedIndex(null);
     }
   };
 
   const handlePrevious = () => {
-    if (index > 0) {
+    if (index > 0) {     
+      console.log('Previous button clicked - going back to question', index - 1)
       setIndex(index - 1);
       setSelectedIndex(null);
     }
@@ -107,7 +113,7 @@ const Questionaire = () => {
                     color: isSelected ? 'white' : theme.colors.text,
                     fontSize: 20,
                     fontWeight: '600',
-                    height: 40,
+                    height: 45,
                     width: 160,
                     textAlign: 'center',
                     paddingVertical: 10,

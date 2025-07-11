@@ -1,3 +1,5 @@
+
+
 import {
   SafeAreaView,
   StyleSheet,
@@ -41,59 +43,77 @@ const SignUp = () => {
     }
   }, [email, password, name, phoneNumber]);
 
+ 
   const HandleLogin = async () => {
-    let valid = true;
+  let isValid = true;
 
-    if (!name) {
-      setTextNameError('Name field is blank');
-      valid = false;
-    } else {
-      setTextNameError('');
-    }
+  if (!name || name.length <= 0) {
+    setTextNameError('Name field is blank');
+    isValid = false;
+  } else {
+    setTextNameError('');
+  }
 
-    if (!email) {
-      setTextEmailError('Email field is blank');
-      valid = false;
-    } else if (!emailRegex.test(email)) {
-      setTextEmailError('Please enter a valid Email');
-      valid = false;
-    } else {
-      setTextEmailError('');
-    }
+  if (email.length <= 0) {
+    setTextEmailError('Email field is blank');
+    isValid = false;
+  } else if (!emailRegex.test(email)) {
+    setTextEmailError('Please enter a valid email');
+    isValid = false;
+  } else {
+    setTextEmailError('');
+  }
 
-    if (!phoneNumber) {
-      setTextPhoneError('Phone number field is blank');
-      valid = false;
-    } else if (phoneNumber.length !== 10) {
-      setTextPhoneError('Phone number must contain 10 digits');
-      valid = false;
-    } else {
-      setTextPhoneError('');
-    }
+  if (phoneNumber.length <= 0) {
+    setTextPhoneError('Phone number field is blank');
+    isValid = false;
+  } else if (phoneNumber.length !== 10) {
 
-    if (!password) {
-      setTextPassError('Password field is blank');
-      valid = false;
-    } else if (password.length < 6) {
-      setTextPassError('Password must be at least 6 characters');
-      valid = false;
-    } else {
-      setTextPassError('');
-    }
+    setTextPhoneError('Phone number must contain exactly 10 digits');
+    isValid = false;
+  } else {
+    setTextPhoneError('');
+  }
 
-    setIsDisable(!valid);
-    if (!valid) return;
+  if (password.length <= 0) {
+    setTextPassError('Password field is blank');
 
-    const userData = { name, email, phoneNumber, password };
+    isValid = false;
+  } else if (password.length < 6) {
+    setTextPassError('Password should be at least 6 characters');
+    
+    isValid = false;
+  } else {
+    setTextPassError('');
+  }
 
-    try {
-      await AsyncStorage.setItem('user', JSON.stringify(userData));
-      Alert.alert('Congratulations!', 'Sign-up successful!');
-      navigation.navigate('Sign In');
-    } catch (error) {
-      console.error('Error saving user:', error);
-    }
+  if (!isValid) {
+    return;
+  }
+
+  const userData = {
+    name,
+    email,
+    phoneNumber,
+    password,
   };
+
+  try {
+    await AsyncStorage.setItem('user', JSON.stringify(userData));
+    console.log('User data saved:', userData);
+    Alert.alert('Congratulations!', 'Sign up successful');
+    navigation.navigate('Sign In');
+  } catch (error) {
+    console.log('Error saving user:', error);
+  }
+};
+
+
+  console.log("Name", name);
+  console.log("Email", email);
+  console.log("PhoneNumber", phoneNumber);
+  console.log("Password", password);
+
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
