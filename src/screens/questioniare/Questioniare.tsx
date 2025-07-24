@@ -21,7 +21,7 @@ const Questionaire = () => {
 
   useEffect(() => {
     const initialize = async () => {
-      await SaveQuestionnaire(); // Save default data (optional)
+      await SaveQuestionnaire(); 
       const data = await LoadQuestionnaire();
       console.log('Loaded questionnaire data:', data);
       if (data) {
